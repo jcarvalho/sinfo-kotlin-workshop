@@ -37,4 +37,28 @@ public class TodoListService {
         return todoListItemRepository.save(item);
     }
 
+    public Mono<TodoListItem> completeItem(String userId, String id) {
+        return todoListItemRepository.findById(id)
+                .filter((it) -> it.getUserId().equals(userId))
+                .map((item) -> {
+                    if (item.isCompleted()) {
+                        throw new ItemAlreadyCompletedException(id);
+                    } else {
+                        return item;
+                    }
+                })
+                .flatMap((item) -> todoListItemRepository.save(new TodoListItem(
+                        item.getId(),
+                        item.getUserId(),
+                        item.getTitle(),
+                        item.getDescription(),
+                        true
+                )));
+    }
+
+    public static class ItemAlreadyCompletedException extends RuntimeException {
+        public ItemAlreadyCompletedException(String id) {
+            super("Item with ID " + id + " is already completed");
+        }
+    }
 }

@@ -2,6 +2,8 @@ package com.talkdesk.todolist.controller;
 
 import com.talkdesk.todolist.model.TodoListItem;
 import com.talkdesk.todolist.service.TodoListService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,6 +27,17 @@ public class TodoListController {
     @PostMapping
     public Mono<TodoListItem> createItem(@PathVariable String userId, @RequestBody Mono<CreateItemRequest> request) {
         return request.flatMap((data) -> todoListService.createItem(userId, data.getTitle(), data.getDescription()));
+    }
+
+    @PostMapping("/{id}")
+    public Mono<ResponseEntity<TodoListItem>> completeItem(@PathVariable String userId, @PathVariable String id) {
+        return todoListService.completeItem(userId, id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .onErrorReturn(
+                        TodoListService.ItemAlreadyCompletedException.class,
+                        ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+                );
     }
 
     public static class CreateItemRequest {
