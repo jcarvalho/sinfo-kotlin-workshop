@@ -56,6 +56,12 @@ public class TodoListService {
                 )));
     }
 
+    public Mono<TodoListItem> deleteItem(String userId, String id) {
+        return todoListItemRepository.findById(id)
+                .filter((item) -> item.getUserId().equals(userId))
+                .flatMap((item) -> todoListItemRepository.delete(item).thenReturn(item));
+    }
+
     public static class ItemAlreadyCompletedException extends RuntimeException {
         public ItemAlreadyCompletedException(String id) {
             super("Item with ID " + id + " is already completed");

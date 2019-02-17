@@ -40,6 +40,13 @@ public class TodoListController {
                 );
     }
 
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Object>> deleteItem(@PathVariable String userId, @PathVariable String id) {
+        return todoListService.deleteItem(userId, id)
+                .map((item) -> ResponseEntity.noContent().build())
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
     public static class CreateItemRequest {
 
         private String title;
