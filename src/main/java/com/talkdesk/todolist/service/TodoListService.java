@@ -1,22 +1,22 @@
 package com.talkdesk.todolist.service;
 
 import com.talkdesk.todolist.model.TodoListItem;
+import com.talkdesk.todolist.repository.TodoListItemRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
-import java.util.Collections;
 
 @Service
 public class TodoListService {
 
+    private final TodoListItemRepository todoListItemRepository;
+
+    public TodoListService(TodoListItemRepository todoListItemRepository) {
+        this.todoListItemRepository = todoListItemRepository;
+    }
+
     public Flux<TodoListItem> getItemsForUser(String userId) {
-        return Flux.fromIterable(Collections.singletonList(new TodoListItem(
-                "some-id",
-                userId,
-                "Some Title",
-                "Some Description",
-                false
-        )));
+        return todoListItemRepository.findAllByUserId(userId);
     }
 
 }

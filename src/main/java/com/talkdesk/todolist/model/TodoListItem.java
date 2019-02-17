@@ -1,10 +1,18 @@
 package com.talkdesk.todolist.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Objects;
 
+@Document
 public class TodoListItem {
 
+    @Id
     private String id;
+
+    @Indexed
     private String userId;
     private String title;
     private String description;
