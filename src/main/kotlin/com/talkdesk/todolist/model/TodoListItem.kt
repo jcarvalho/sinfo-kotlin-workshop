@@ -11,8 +11,4 @@ data class TodoListItem(
     val title: String,
     val description: String,
     val completed: Boolean = false
-) {
-
-    fun isCompleted() = completed
-
-}
+)
